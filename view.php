@@ -1,19 +1,19 @@
 <?php
-// Cargar el entorno de OpenEMR
+// Load the OpenEMR environment
 require_once("../../globals.php");
 require_once("$srcdir/forms.inc.php");
 
-// Obtener parámetros esenciales
+// Retrieve essential parameters
 $encounter = $_SESSION['encounter'] ?? 0;
 $pid = $_SESSION['pid'] ?? 0;
-$form_id = $_GET['id'] ?? 0; // ID del formulario en la tabla `forms`
+$form_id = $_GET['id'] ?? 0; // Form ID in the `forms` table
 
-// Validar parámetros
+// Validate parameters
 if (!$encounter || !$pid || !$form_id) {
     die(xl("Falta el encuentro, paciente o ID del formulario"));
 }
 
-// Consultar las intervenciones del odontograma
+// Query the odontogram interventions
 $interventions = [];
 $result = sqlStatement(
     "SELECT h.*, o.svg_id 
@@ -35,20 +35,20 @@ while ($row = sqlFetchArray($result)) {
 <body>
     <div class="container">
         <h2><?php echo xlt('Odontograma'); ?></h2>
-        <!-- Contenedor para el SVG del odontograma -->
+        <!-- Container for the odontogram SVG -->
         <div id="odontogram-svg" style="width: 1048px; height: 704px;"></div>
 
-        <!-- Tabla de intervenciones -->
-        <h3><?php echo xlt('Intervenciones'); ?></h3>
+         <!-- Interventions table -->
+        <h3><?php echo xlt('Interventions'); ?></h3>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th><?php echo xlt('Diente'); ?></th>
-                    <th><?php echo xlt('Tipo de intervención'); ?></th>
-                    <th><?php echo xlt('Opción'); ?></th>
-                    <th><?php echo xlt('Símbolo'); ?></th>
-                    <th><?php echo xlt('Código'); ?></th>
-                    <th><?php echo xlt('Fecha'); ?></th>
+                    <th><?php echo xlt('Tooth'); ?></th>
+                    <th><?php echo xlt('Type of Intervention'); ?></th>
+                    <th><?php echo xlt('Option'); ?></th>
+                    <th><?php echo xlt('Symbol'); ?></th>
+                    <th><?php echo xlt('Code'); ?></th>
+                    <th><?php echo xlt('Date'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -66,19 +66,19 @@ while ($row = sqlFetchArray($result)) {
         </table>
     </div>
 
-    <!-- Scripts para cargar y manipular el SVG -->
+     <!-- Scripts to load and manipulate the SVG -->
     <script src="<?php echo $GLOBALS['webroot']; ?>/public/assets/jquery-3.6.0/jquery.min.js"></script>
     <script src="<?php echo $GLOBALS['webroot']; ?>/public/assets/svg.js/svg.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Crear el lienzo SVG
+           // Create the SVG canvas
             var draw = SVG().addTo('#odontogram-svg').size(1048, 704);
 
-            // Cargar el SVG base del odontograma
+            // Load the base SVG for the odontogram
             $.get('/interface/forms/odontogram/assets/odontogram.svg', function(svgData) {
                 draw.svg(svgData);
 
-                // Superponer los símbolos de las intervenciones
+                // Overlay intervention symbols
                 <?php foreach ($interventions as $intervention) { ?>
                     draw.image('/interface/forms/odontogram/php/get_symbol.php?symbol=<?php echo urlencode($intervention['symbol']); ?>')
                         .size(30, 30)
