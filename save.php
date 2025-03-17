@@ -16,16 +16,16 @@ if (!$pid || !$encounter) {
     exit;
 }
 
-// Verificar si ya existe un formulario en forms para este encuentro
+// Check if a form already exists in the forms table for this encounter
 $existing_form = sqlQuery("SELECT id, form_id FROM forms WHERE encounter = ? AND formdir = 'odontogram' AND deleted = 0", [$encounter]);
 $existing_form_id = $existing_form['id'] ?? null;
 $form_id = $existing_form['form_id'] ?? null;
 
 if (!$existing_form_id) {
-    // Generar un nuevo form_id con sequences
+     // Generate a new form_id using sequences
     $form_id = generate_id();
 
-    // Registrar el formulario en la tabla forms
+   // Register the form in the forms table
     sqlInsert(
         "INSERT INTO forms (date, encounter, form_name, form_id, pid, user, groupname, authorized, formdir) 
          VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, 'odontogram')",
