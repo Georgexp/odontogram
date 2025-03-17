@@ -1,4 +1,4 @@
-Formulario Odontogramas para Oftalmólogos Para usar en OpenEMR
+Odontogram Form  for use in OpenEMR
 
 Download the repository, put the odontogram folder in openemr/interface/form. Then go to Admin/forms/Forms Administration. Then install DB and then activate it.
 
